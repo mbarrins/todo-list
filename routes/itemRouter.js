@@ -10,7 +10,18 @@ function routes(Item) {
       item.save();
       return res.status(201).json(item);
     })
-    .get((req, res) => res.json(items));
+    .get((req, res) => {
+      const query = {}
+
+      if (req.query.completed) {
+        query.completed = req.query.completed
+      }
+
+      Item.find(query, (err, items) => {
+        if (err) return res.send(err)
+        return res.json(items)
+      });
+    });
 
   itemRouter.use('/items/:itemId', (req, res, next) => {
     Item.findById(req.params.itemId, (err, item) => {
